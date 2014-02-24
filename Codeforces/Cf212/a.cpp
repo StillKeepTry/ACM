@@ -17,6 +17,7 @@ struct point
 	int x,y;
 	int len;
 }q[2];
+
 void bfs(int index)
 {
 	q[index].len = 0;
