@@ -4,7 +4,6 @@ while c:
 	a = raw_input().split()
 	n = int(a[0])
 	cnt = s = 0
-
 	for i in range(1, n+1):
 		s = s + int(a[i])
 	for i in range(1, n+1):
