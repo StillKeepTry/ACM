@@ -22,7 +22,7 @@ int path(int u)
             sy[v] = 1;
             if (!fy[v] || path(fy[v])) {
                 fx[u] = v; fy[v] = u;
-                return -1;
+                return 1;
             }
         } else {
             slack[v] = (slack[v] < (lx[u] + ly[v] - g[u][v])) ? slack[v] : (lx[u] + ly[v] - g[u][v]);
