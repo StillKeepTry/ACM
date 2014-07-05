@@ -3,7 +3,7 @@
 	> Author: skt
 	> Mail: sktsxy@gmail.com 
 	> Created Time: 2014年07月05日 星期六 21时00分08秒
-    > description : g [][] 为权值，这里要建双向边
+    	> description : g [][] 为权值，这里要建双向边
  ************************************************************************/
 
 #include <bits/stdc++.h>
