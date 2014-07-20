@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: d.cpp
-	> Author: skt
-	> Mail: sktsxy@gmail.com 
-	> Created Time: 2014年07月19日 星期六 21时46分44秒
+    > File Name: d.cpp
+    > Author: skt
+    > Mail: sktsxy@gmail.com
+    > Created Time: 2014年07月19日 星期六 21时46分44秒
  ************************************************************************/
 
 #include <bits/stdc++.h>
@@ -13,7 +13,8 @@ using namespace std;
 template <typename T> inline T Max(T a, T b) {return a>b?a:b;}
 template <typename T> inline T Min(T a, T b) {return a<b?a:b;}
 const LL INF = 1e18;
-LL n, m, k, dis[MAXN], cdis[MAXN], u, v, x, cnt, head[MAXN], s, y, ans;
+int n, m, k, u, v, x, cnt, head[MAXN], s, y, ans;
+LL dis[MAXN], pnt[MAXN], res[MAXN];
 bool vis[MAXN];
 
 map <pair<int, int>, LL> edges;
@@ -21,16 +22,29 @@ map <pair<int, int>, LL> edges;
 struct Edge {
     int v, next;
     LL c;
-} p[MAXN << 2];
+} p[MAXN << 3];
+
+struct Node {
+    int Pos;
+
+    Node() {}
+
+    Node(int Pos): Pos(Pos) {}
+
+    bool operator < (const Node a) const {
+        return dis[Pos] > dis[a.Pos];
+    }
+};
 
 void init()
 {
     edges.clear();
-    fill(cdis, cdis + MAXN, INF);
     fill(dis, dis + MAXN, INF);
     fill(head, head + MAXN, -1);
+    fill(pnt, pnt + MAXN, INF);
     memset(p, 0, sizeof(p));
     memset(vis, 0, sizeof(vis));
+    memset(res, 0, sizeof(res));
     cnt = ans = 0;
 }
 
@@ -44,10 +58,15 @@ void addEdge(int u, int v, LL c)
 
 bool relax(int u, int v, LL c)
 {
-    if (dis[v] > dis[u] + c) {
+    if (dis[v] >= dis[u] + c) {
+        if (dis[v] == dis[u] + c) {
+            res[v] ++; return false;
+        } else {
+            res[v] = 1;
+        }
         dis[v] = dis[u] + c;
         return true;
-    } 
+    }
     return false;
 }
 
@@ -55,14 +74,14 @@ void spfa(int S)
 {
     vis[S] = 1;
     dis[S] = 0;
-    queue <int> q;
-    q.push(S);
+    priority_queue <Node> q;
+    q.push(Node(S));
     while (!q.empty()) {
-        int u = q.front();
-        vis[u] = false;
-        for (int i = head[u]; i != -1; i = p[i].next) {
+        Node u = q.top();
+        vis[u.Pos] = false;
+        for (int i = head[u.Pos]; i != -1; i = p[i].next) {
             int v = p[i].v;
-            if (relax(u, v, p[i].c) && !vis[v]) {
+            if (relax(u.Pos, v, p[i].c) && !vis[v]) {
                 vis[v] = true;
                 q.push(v);
             }
@@ -75,42 +94,41 @@ void work()
 {
     init();
     for (int i = 1; i <= m; i ++) {
-        cin >> u >> v >> x;
-        pair <int, int> edge = mp(u, v);
-        if (edges.find(edge) == edges.end()) {
-            edges.insert(mp(edge, x));
-        } else {
-            edges[edge] = Min(edges[edge], x);
-        }
-    }
-    for (map <pair<int, int>, LL>::iterator it = edges.begin(); it != edges.end(); it ++) {
-        addEdge((it->first).first, (it->first).second, it->second);
+        scanf("%d %d %d", &u, &v, &x);
+        addEdge(u, v, x);
+        addEdge(v, u, x);
     }
     for (int i = 1; i <= k; i ++) {
-        cin >> s >> y;
-        if (cdis[s] == INF) {
-            cdis[s] = y;
+        scanf("%d %d", &s, &y);
+        if (pnt[s] == INF) {
+            pnt[s] = y;
         } else {
-            if (cdis[s] > y) {
-                ans ++;
-                cdis[s] = y;
+            ans ++;
+            if (pnt[s] > y) {
+                pnt[s] = y;
+            }
+        }
+    }
+    for (int i = 1; i <= n; i ++) {
+        if (pnt[i] != INF) {
+            addEdge(1, i, pnt[i]);
+        }
+    }
+    spfa(1);
+    for (int i = 1; i <= n; i ++) {
+        if (pnt[i] != INF) {
+            if (dis[i] == pnt[i]) {
+                if (res[i] > 1) ans ++;
             } else {
                 ans ++;
             }
         }
     }
-    spfa(1);
-    for (int i = 1; i <= n; i ++) {
-        if (cdis[i] >= dis[i] && cdis[i] != INF) {
-            ans ++;
-        }
-    }
-    cout << ans << endl;
+    printf("%d\n", ans);
 }
 int main()
 {
- //   freopen("in", "r", stdin);
-    while (cin >> n >> m >> k) {
+    while (scanf("%d %d %d", &n, &m, &k) != EOF) {
         work();
     }
     return 0;
