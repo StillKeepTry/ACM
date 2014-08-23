@@ -90,6 +90,47 @@ void Dot()
     }
 }
 
+/*
+ * (a0  a1  a2  a3   a4  a5  a6  a7)
+ * (a0  a2  a4  a6) (a1  a3  a5  a7)
+ * (a0  a4)(a2  a6) (a1  a5)(a3  a7)
+ * (a0)(a4)(a2)(a6) (a1)(a5)(a3)(a7)
+ */
+
+void change(cp y[], int n)
+{
+    for (int i = 1, j = n / 2; i < n - 1; i ++) {
+        if (i < j) swap(y[i], y[j]);
+        int k = n / 2;
+        while (j >= k) {
+            j -= k;
+            k /= 2;
+        }
+        if (j < k) j += k;
+    }
+}
+
+/*
+ * 非递归形式
+ */
+void fft(cp a[], int n, int One) {
+    change(a, n);
+    for (int i = 2; i <= n; i <<= 1) {
+        cp wn = cp(cos(One * 2 * PI / i), sin(One * 2 * PI / i));
+        for (int j = 0; j < n; j += i) {
+            cp w = cp(1, 0);
+            for (int k = j; k < j + i / 2; k ++) {
+                cp u = a[k];
+                cp v = w * a[k + i / 2];
+                a[k] = u + v;
+                a[k + i / 2] = u - v;
+                w = w * wn;
+            }
+        }
+    }
+}
+
+
 void work()
 {
     input();
